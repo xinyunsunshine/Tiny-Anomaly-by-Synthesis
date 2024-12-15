@@ -381,7 +381,8 @@ class OneImgPipe():
 class Pipeline():
     def __init__(self, diffusion_model_name, dataset_path, save_path, image_size, conditioners, upsample_models, mask_generator, ori_image_size, progress_bar = True,ssim = False,
                  verbose = False, report_num = 1, visualize_num = 20, overwrite = False, only_generate_img = False, square = True, gen_save_path = None, model_path = None,
-                 ddim = False, ddim_sampling_timesteps = 250, ddim_guidance_scale = 0.5):
+                 ddim = False, ddim_sampling_timesteps = 250, ddim_guidance_scale = 0.5,
+                 quantize = False, quant_save_path = None, quant_bits = 16):
         self.diffusion_model_name = diffusion_model_name
         self.dataset_path = dataset_path
         self.save_path = save_path
@@ -404,6 +405,9 @@ class Pipeline():
         self.ddim = ddim
         self.ddim_sampling_timesteps = ddim_sampling_timesteps
         self.ddim_guidance_scale = ddim_guidance_scale
+        self.quant_save_path = quant_save_path
+        self.quantize = quantize
+        self.quant_bits = quant_bits
 
         ###### load diffusion model ######
         model = Unet(
@@ -426,6 +430,16 @@ class Pipeline():
         print(model_path)
         state_dict = torch.load(model_path)
         diffusion.load_state_dict(state_dict) #['model']
+
+        if self.quantize:
+            from quantizer import quantize_model
+            quantized_state_dict = quantize_model(diffusion, self.quant_bits)
+
+            quantized_model_name = self.diffusion_model_name.replace('model-', f'model-{self.quant_bits}bits-')
+            torch.save(quantized_state_dict, f"{self.quant_save_path}/{quantized_model_name}")
+            print('quantized model saved at', self.quant_save_path)
+            diffusion.load_state_dict(quantized_state_dict)
+
         self.diffusion = diffusion
         if self.verbose:
             # display samples from model produced during training

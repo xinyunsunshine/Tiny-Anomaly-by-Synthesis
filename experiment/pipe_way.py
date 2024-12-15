@@ -30,6 +30,12 @@ else:
     rellis_model_dir = '/home/sunsh16e/diffunc/models/rellis_full_id'
     progress_bar = True
 
+##### QUANTIZATION ##### 
+quantize = True
+quant_save_path = f'{dir}/quant'
+quant_bits = 16
+########################
+
 # load diffusion model
 if dataset == 'rugd':
     model_path = "/home/sunsh16e/diffunc/cloud/rugd_full_id_train/naive_quant_model.pt"
@@ -115,6 +121,9 @@ for ddim_sampling_timesteps in ddim_sampling_timesteps_list:
                     ddim = ddim,
                     ddim_sampling_timesteps = ddim_sampling_timesteps,
                     ddim_guidance_scale = ddim_guidance_scale,
+                    quantize=quantize,
+                    quant_save_path=quant_save_path,
+                    quant_bits=quant_bits
                     )
     pipe.run(image_paths)
 
