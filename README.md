@@ -3,6 +3,8 @@ Repo for final project for MIT 6.5940 TinyML and Efficient Deep Learning Computi
 
 This project is based on [Anomalies-by-Synthesis: Anomaly Detection using Generative Diffusion Models for Off-Road Navigation](https://bit.ly/anomalies-by-synthesis). This project proposes a multi-faceted optimization strategy tailored to the computational bottlenecks of the diffusion pipeline for anomaly detection.
 
+The repo is built based on [anomalies-by-synthesis](https://github.com/siddancha/anomalies-by-synthesis).
+
 ## important files
 Test environment: Run `experiment/pipe_way.py`.
 
